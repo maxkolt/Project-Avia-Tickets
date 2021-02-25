@@ -1,5 +1,5 @@
 import api from '../services/apiService';
-import { formatDate } from '../helpers/date';
+import { formateDate } from '../helpers/date';
 
 class Locations {
   constructor(api, helpers) {
@@ -9,7 +9,7 @@ class Locations {
     this.shortCities = {};
     this.lastSearch = {};
     this.airlines = {};
-    this.formatDate = helpers.formatDate;
+    this.formateDate = helpers.formateDate;
   }
   async init() {
     const response = await Promise.all([
@@ -29,7 +29,7 @@ class Locations {
 
   getCityCodeByKey(key) {
     const city = Object.values(this.cities).find(
-      item => item.full_name === key,
+        city => city.full_name === key,
     );
     return city.code;
   }
@@ -38,26 +38,17 @@ class Locations {
     return this.cities[code].name;
   }
 
+  getAirlineLogoByCode(code) {
+    return this.airlines[code] ? this.airlines[code].logo : null;
+  }
+
   getAirlineNameByCode(code) {
     return this.airlines[code] ? this.airlines[code].name : '';
   }
-
-  getAirlineLogoByCode(code) {
-    return this.airlines[code] ? this.airlines[code].logo : '';
-  }
-
+  // *переделать createShortCities
   createShortCities(cities) {
     return Object.entries(cities).reduce((acc, [, city]) => {
       acc[city.full_name] = null;
-      return acc;
-    }, {});
-  }
-
-  serializeAirlines(airlines) {
-    return airlines.reduce((acc, item) => {
-      item.logo = `http://pics.avs.io/200/200/${item.code}.png`;
-      item.name = item.name || item.name_translations.en;
-      acc[item.code] = item;
       return acc;
     }, {});
   }
@@ -68,7 +59,7 @@ class Locations {
       return acc;
     }, {});
   }
-
+  // *переделать serialize
   serializeCities(cities) {
     return cities.reduce((acc, city) => {
       const country_name = this.countries[city.country_code].name;
@@ -83,6 +74,15 @@ class Locations {
     }, {});
   }
 
+  serializeAirlines(airlines) {
+    return airlines.reduce((acc, item) => {
+      item.logo = `http://pics.avs.io/200/200/${item.code}.png`;
+      item.name = item.name || item.name_translations.en;
+      acc[item.code] = item;
+      return acc;
+    }, {});
+  }
+
   async fetchTickets(params) {
     const response = await this.api.prices(params);
     this.lastSearch = this.serializeTickets(response.data);
@@ -90,19 +90,23 @@ class Locations {
 
   serializeTickets(tickets) {
     return Object.values(tickets).map(ticket => {
+      console.log(ticket);
       return {
         ...ticket,
         origin_name: this.getCityNameByCode(ticket.origin),
         destination_name: this.getCityNameByCode(ticket.destination),
         airline_logo: this.getAirlineLogoByCode(ticket.airline),
         airline_name: this.getAirlineNameByCode(ticket.airline),
-        departure_at: this.formatDate(ticket.departure_at, 'dd MMM yyyy hh:mm'),
-        return_at: this.formatDate(ticket.return_at, 'dd MMM yyyy hh:mm'),
+        departure_at: this.formateDate(
+            ticket.departure_at,
+            'dd MMM yyyy hh:mm',
+        ),
+        return_at: this.formateDate(ticket.return_at, 'dd MMM yyyy hh:mm'),
       };
     });
   }
 }
 
-const locations = new Locations(api, { formatDate });
+const locations = new Locations(api, { formateDate });
 
 export default locations;
