@@ -3,7 +3,7 @@ import currencyUI from './currency';
 class TicketsUI {
   constructor(currency) {
     this.container = document.querySelector('.tickets-sections .row');
-    this.getCurrencySymbol = currency.getCurrencySymbol.bind(currency);
+    this.currencySymbol = currency.currencySymbol;
   }
 
   renderTickets(tickets) {
@@ -15,10 +15,9 @@ class TicketsUI {
     }
 
     let fragment = '';
-    const currency = this.getCurrencySymbol();
 
     tickets.forEach(ticket => {
-      const template = TicketsUI.ticketTemplate(ticket, currency);
+      const template = TicketsUI.ticketTemplate(ticket, this.currencySymbol);
       fragment += template;
     });
 
@@ -36,9 +35,7 @@ class TicketsUI {
 
   static emptyMsgTemplate() {
     return `
-    <div class="tickets-empty-res-msg">
-      По вашему запросу билетов не найдено.
-    </div>
+      <div class="tickets-empty-res-msg">По вашему запросу билетов не найдено.</div>
     `;
   }
 
@@ -47,13 +44,8 @@ class TicketsUI {
     <div class="col s12 m6">
       <div class="card ticket-card">
         <div class="ticket-airline d-flex align-items-center">
-          <img
-            src="${ticket.airline_logo}"
-            class="ticket-airline-img"
-          />
-          <span class="ticket-airline-name"
-            >${ticket.airline_name}</span
-          >
+          <img src="${ticket.airline_logo}" class="ticket-airline-img" />
+          <span class="ticket-airline-name">${ticket.airline_name}</span>
         </div>
         <div class="ticket-destination d-flex align-items-center">
           <div class="d-flex align-items-center mr-auto">

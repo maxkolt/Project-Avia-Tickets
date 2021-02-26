@@ -29,7 +29,7 @@ class Locations {
 
   getCityCodeByKey(key) {
     const city = Object.values(this.cities).find(
-        city => city.full_name === key,
+      city => city.full_name === key,
     );
     return city.code;
   }
@@ -98,8 +98,8 @@ class Locations {
         airline_logo: this.getAirlineLogoByCode(ticket.airline),
         airline_name: this.getAirlineNameByCode(ticket.airline),
         departure_at: this.formateDate(
-            ticket.departure_at,
-            'dd MMM yyyy hh:mm',
+          ticket.departure_at,
+          'dd MMM yyyy hh:mm',
         ),
         return_at: this.formateDate(ticket.return_at, 'dd MMM yyyy hh:mm'),
       };
